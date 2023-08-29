@@ -123,6 +123,9 @@ namespace ntlab
 
         for (auto& d : activeDetectors)
         {
+            if (d.detector == nullptr)
+                continue;
+
             if (pthread_equal (d.threadId, currentThreadID))
             {
                 auto* defaultZone = malloc_default_zone();
