@@ -25,19 +25,35 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest]
         build_type: [Debug, Release]
-        c_compiler: [default, clang]
-        exclude:
-          - os: macos-latest
+        c_compiler: [default, clang, gnu]
+        include:
+          - os: windows-latest
             c_compiler: clang
+            generator: Ninja
+          - os: windows-latest
+            c_compiler: gnu
+            generator: Ninja
+          - os: macos-latest
+            c_compiler: gnu
+            generator: Ninja
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Install Ninja (MacOS)
+      if: ${{ matrix.os == 'macos-latest' && matrix.generator == 'Ninja' }}
+      run: brew install ninja
 
     - name: Set up Clang
       if: ${{ matrix.c_compiler == 'clang' }}
       uses: egor-tensin/setup-clang@v1.4
 
-    - name: Configure CMake
+    - name: Configure CMake (Default generator)
+      if: ${{ matrix.generator != 'Ninja' }}
+      run: cmake -B build
+
+    - name: Configure CMake (Ninja)
+      if: ${{ matrix.generator == 'Ninja' }}
       run: cmake -B build -G Ninja
 
     - name: Build
