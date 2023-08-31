@@ -12,13 +12,8 @@ inline void dontOptimizePointer (const void* ptr)
     antiOptimizationVariable += reinterpret_cast<size_t> (ptr);
 }
 
-int main()
+bool test (const std::function<void()>& function)
 {
-    struct SomeObj
-    {
-        int a, b, c;
-    };
-
     bool allocationDetected = false;
 
     // the start of the section you want to examine
@@ -32,16 +27,35 @@ int main()
         };
 
         // this will trigger the detection
-        std::unique_ptr<SomeObj> someObj (new SomeObj);
-        dontOptimizePointer (someObj.get());
+        function();
     }
 
-    if (! allocationDetected)
-        return 1;
+    return allocationDetected;
+}
 
-    // this won't trigger the detection
-    std::unique_ptr<SomeObj> someOtherObj (new SomeObj);
-    dontOptimizePointer (someOtherObj.get());
+int main()
+{
+    struct SomeObj
+    {
+        int a, b, c;
+    };
 
-    return 0;
+    auto failures = 0;
+
+    failures += ! test (
+        []
+        {
+            std::unique_ptr<SomeObj> someObj (new SomeObj);
+            dontOptimizePointer (someObj.get());
+        });
+
+    failures += ! test (
+        []
+        {
+            auto ptr = std::malloc (42);
+            dontOptimizePointer (ptr);
+            std::free (ptr);
+        });
+
+    return failures;
 }
