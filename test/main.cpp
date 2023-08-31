@@ -25,6 +25,9 @@ int main()
 
         // this will trigger the detection
         std::unique_ptr<SomeObj> someObj (new SomeObj);
+
+        // this ensures that the object is not optimized away
+        std::cout << "Address of allocated object: " << someObj.get() << std::endl;
     }
 
     if (! allocationDetected)
@@ -32,6 +35,9 @@ int main()
 
     // this won't trigger the detection
     std::unique_ptr<SomeObj> someOtherObj (new SomeObj);
+
+    // this ensures that the object is not optimized away
+    std::cout << "Address of allocated other object: " << someOtherObj.get() << std::endl;
 
     return 0;
 }
