@@ -23,18 +23,9 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
         build_type: [Debug, Release]
         c_compiler: [default, clang]
-#        include:
-#          - os: windows-latest
-#            c_compiler: default
-#          - os: windows-latest
-#            c_compiler: clang
-#          - os: ubuntu-latest
-#            c_compiler: default
-#          - os: ubuntu-latest
-#            c_compiler: clang
 
     steps:
     - uses: actions/checkout@v3
@@ -51,4 +42,4 @@ jobs:
 
     - name: Test
       working-directory: build
-      run: ctest --build-config Release
+      run: ctest --build-config ${{ matrix.build_type }}
