@@ -5,6 +5,13 @@
 #include <ScopedAllocationDetector.h>
 #include <memory>
 
+static size_t antiOptimizationVariable = 0;
+
+inline void dontOptimizePointer (const void* ptr)
+{
+    antiOptimizationVariable += reinterpret_cast<size_t> (ptr);
+}
+
 int main()
 {
     struct SomeObj
@@ -26,9 +33,7 @@ int main()
 
         // this will trigger the detection
         std::unique_ptr<SomeObj> someObj (new SomeObj);
-
-        // this ensures that the object is not optimized away
-        std::cout << "Address of allocated object: " << someObj.get() << std::endl;
+        dontOptimizePointer (someObj.get());
     }
 
     if (! allocationDetected)
@@ -36,9 +41,7 @@ int main()
 
     // this won't trigger the detection
     std::unique_ptr<SomeObj> someOtherObj (new SomeObj);
-
-    // this ensures that the object is not optimized away
-    std::cout << "Address of allocated other object: " << someOtherObj.get() << std::endl;
+    dontOptimizePointer (someOtherObj.get());
 
     return 0;
 }
