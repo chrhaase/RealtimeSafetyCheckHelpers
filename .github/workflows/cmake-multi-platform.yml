@@ -38,10 +38,10 @@ jobs:
       uses: egor-tensin/setup-clang@v1.4
 
     - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      run: cmake -B build -G Ninja
 
     - name: Build
-      run: cmake --build build
+      run: cmake --build build --config ${{ matrix.build_type }}
 
     - name: Test
       working-directory: build
