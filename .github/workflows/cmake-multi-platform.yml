@@ -54,4 +54,5 @@ jobs:
       run: cmake --build build --config ${{ matrix.build_type }}
 
     - name: Test
+      working-directory: build
       run: ctest --build-config Release
