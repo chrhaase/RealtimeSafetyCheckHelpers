@@ -60,7 +60,7 @@ namespace ntlab
     std::atomic<int> ScopedAllocationDetector::count (0);
     std::array<ScopedAllocationDetector::DetectorProperties, ScopedAllocationDetector::maxNumDetectors> ScopedAllocationDetector::activeDetectors {};
 
-#ifdef WIN32
+#if RSCH_WINDOWS
 
     void ScopedAllocationDetector::activateDetection()
     {
@@ -100,7 +100,7 @@ namespace ntlab
         return 1;
     }
 
-#elif defined(__APPLE__) || defined(__MACOSX)
+#elif RSCH_MAC
 
     ScopedAllocationDetector::MacSystemMalloc ScopedAllocationDetector::macSystemMalloc;
 
@@ -141,7 +141,7 @@ namespace ntlab
         return macSystemMalloc (zone, size);
     }
 
-#else // Linux
+#elif RSCH_LINUX
 
     ScopedAllocationDetector::LinuxMallocHook ScopedAllocationDetector::originalMallocHook;
 
@@ -179,9 +179,9 @@ namespace ntlab
 
 #endif
 
-#ifdef WIN32
+#if RSCH_WINDOWS
     ScopedAllocationDetector::ThreadID ScopedAllocationDetector::getCurrentThreadID() { return GetCurrentThreadId(); }
-#else // Posix
+#elif RSCH_MAC || RSCH_LINUX
     ScopedAllocationDetector::ThreadID ScopedAllocationDetector::getCurrentThreadID() { return pthread_self(); }
 #endif
 }
