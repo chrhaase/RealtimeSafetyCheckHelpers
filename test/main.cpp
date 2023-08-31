@@ -3,6 +3,7 @@
 //
 
 #include <ScopedAllocationDetector.h>
+#include <memory>
 
 int main()
 {
