@@ -27,6 +27,7 @@
 #endif
 
 #if RSCH_WINDOWS
+#define NOMINMAX
 #include <windows.h>
 #elif RSCH_MAC || RSCH_LINUX
 #include <pthread.h>
